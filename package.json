@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node src/index.js"
   },
   "repository": {
     "type": "git",
@@ -15,5 +15,13 @@
   "bugs": {
     "url": "https://github.com/EvgenyKolotov/ICloud-backend/issues"
   },
-  "homepage": "https://github.com/EvgenyKolotov/ICloud-backend#readme"
+  "homepage": "https://github.com/EvgenyKolotov/ICloud-backend#readme",
+  "dependencies": {
+    "config": "^3.3.6",
+    "express": "^4.17.1",
+    "mongoose": "^5.13.5"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.12"
+  }
 }
