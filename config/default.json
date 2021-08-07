@@ -1,3 +1,4 @@
 {
-    "serverPort": 5000
+    "serverPort": 5000,
+    "MongoURL": "mongodb://localhost:27017/icloud"
 }
