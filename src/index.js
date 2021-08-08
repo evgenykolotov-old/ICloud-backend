@@ -4,7 +4,12 @@ const config = require('config');
 
 const application = express();
 const PORT = config.get("serverPort");
-const MONGO_URL = config.get("MongoURL"); 
+const MONGO_URL = config.get("MongoURL");
+
+const authRouter = require("./routes/auth.routes");
+
+application.use(express.json());
+application.use("/api/auth", authRouter);
 
 const startServer = async () => {
     try {
