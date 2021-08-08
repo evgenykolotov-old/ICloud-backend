@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node src/index.js"
+    "start": "node src/index.js",
+    "dev": "nodemon src/index.js"
   },
   "repository": {
     "type": "git",
@@ -17,8 +18,10 @@
   },
   "homepage": "https://github.com/EvgenyKolotov/ICloud-backend#readme",
   "dependencies": {
+    "bcryptjs": "^2.4.3",
     "config": "^3.3.6",
     "express": "^4.17.1",
+    "express-validator": "^6.12.1",
     "mongoose": "^5.13.5"
   },
   "devDependencies": {
