@@ -1,4 +1,5 @@
 {
     "serverPort": 5000,
-    "MongoURL": "mongodb://localhost:27017/icloud"
+    "MongoURL": "mongodb://localhost:27017/icloud",
+    "secretKey": "icloud-secret-token"
 }
