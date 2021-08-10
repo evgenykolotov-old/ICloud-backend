@@ -13,6 +13,11 @@ class FileService {
 						status: "error",
 						message: "Директория успешно создана"
 					});
+				} else {
+					return reject({
+						status: "error",
+						message: "Такой файл уже существует"
+					})
 				}
 				
 			} catch (error) {

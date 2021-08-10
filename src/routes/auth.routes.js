@@ -4,6 +4,8 @@ const jwt = require("jsonwebtoken");
 const config = require("config");
 const { body, validationResult } = require("express-validator");
 const User = require("../models/User");
+const File = require("../models/File");
+const fileService = require("../services/file.service");
 const router = Router();
 
 const validateFields = [
@@ -34,6 +36,7 @@ router.post("/registration", validateFields, async (request, response) => {
 		if (!saved) {
 			throw new Error("Ошибка регистрации, попробуйте позже!");
 		}
+		await fileService.createDir(new File({ user: user.id, name: user.id }));
 		return response.status(201).json({
 			status: "success",
 			message: "Пользователь успешно зарегистрирован!"
