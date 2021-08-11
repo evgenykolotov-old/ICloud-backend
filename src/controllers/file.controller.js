@@ -27,6 +27,19 @@ class FileController {
 			})
 		}
 	}
+
+	async getFiles(request, response) {
+		try {
+			const files = await File.find({ user: request.user.id, parent: request.query.parent });
+			return response.status(200).json({ status: "success", files });
+		} catch (error) {
+			console.log(`An error occurred on the server: ${error}`);
+			return response.status(500).json({
+				status: "error",
+				message: `Возникла ошибка на сервере: ${error}`
+			})
+		}
+	}
 }
 
 module.exports = new FileController();
