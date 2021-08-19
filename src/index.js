@@ -1,6 +1,7 @@
-const express = require('express');
-const mongoose = require('mongoose');
-const config = require('config');
+const express = require("express");
+const mongoose = require("mongoose");
+const config = require("config");
+const fileUpload = require("express-fileupload");
 
 const application = express();
 const PORT = config.get("serverPort");
@@ -9,6 +10,7 @@ const MONGO_URL = config.get("MongoURL");
 const authRouter = require("./routes/auth.routes");
 const fileRouter = require("./routes/file.routes");
 
+application.use(fileUpload({}));
 application.use(express.json());
 application.use("/api/auth", authRouter);
 application.use("/api/file", fileRouter);
