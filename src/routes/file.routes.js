@@ -6,5 +6,6 @@ const router = Router();
 router.get("", authMiddleware, fileController.getFiles);
 router.post("", authMiddleware, fileController.createDir);
 router.post("/upload", authMiddleware, fileController.uploadFile);
+router.delete("", authMiddleware, fileController.deleteFile);
 
 module.exports = router;

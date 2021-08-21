@@ -88,10 +88,14 @@ class FileController {
 			}
 			file.mv(path);
 			const type = file.name.split(".").pop();
+			let filePath = file.path;
+			if (parent) {
+				filePath = `${file.parent}/${file.name}`;
+			}
 			const dbFile = new File({
 				name: file.name,
 				size: file.size,
-				path: parent && parent.path,
+				path: filePath,
 				parent: parent && parent._id,
 				user: user._id,
 				type
@@ -111,6 +115,31 @@ class FileController {
 			})	
 		}
 	}
+
+	async deleteFile(request, response) {
+		try {
+			const file = await File.findOne({ _id: request.query.id, user: request.user.id });
+			if (!file) {
+				return response.status(404).json({
+					status: "error",
+					message: "Файл с таким именем не найден!"
+				});
+			}
+			fileService.deleteFile(file);
+			await file.remove();
+			return response.status(200).json({
+				status: "success",
+				message: "Файл был успешно удалён! "
+			});
+		} catch (error) {
+			console.log(`An error occurred on the server: ${error}`);
+			return response.status(500).json({
+				status: "error",
+				message: `Возникла ошибка на сервере: ${error}`
+			})
+		}
+	}
+
 }
 
 module.exports = new FileController();
