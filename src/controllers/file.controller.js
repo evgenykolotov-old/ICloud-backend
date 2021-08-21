@@ -36,7 +36,22 @@ class FileController {
 
 	async getFiles(request, response) {
 		try {
-			const files = await File.find({ user: request.user.id, parent: request.query.parent });
+			const { sort } = request.query;
+			let files;
+			switch (sort) {
+				case 'name':
+					files = await File.find({ user: request.user.id, parent: request.query.parent }).sort({ name: 1 });
+					break;
+				case 'type':
+					files = await File.find({ user: request.user.id, parent: request.query.parent }).sort({ type: 1 });
+					break;
+				case 'date':
+					files = await File.find({ user: request.user.id, parent: request.query.parent }).sort({ date: 1 });
+					break;
+				default: 
+					files = await File.find({ user: request.user.id, parent: request.query.parent });
+					break;
+			}
 			return response.status(200).json({ status: "success", files });
 		} catch (error) {
 			console.log(`An error occurred on the server: ${error}`);
@@ -73,10 +88,14 @@ class FileController {
 			}
 			file.mv(path);
 			const type = file.name.split(".").pop();
+			let filePath = file.path;
+			if (parent) {
+				filePath = `${file.parent}/${file.name}`;
+			}
 			const dbFile = new File({
 				name: file.name,
 				size: file.size,
-				path: parent && parent.path,
+				path: filePath,
 				parent: parent && parent._id,
 				user: user._id,
 				type
@@ -94,6 +113,50 @@ class FileController {
 				status: "error",
 				message: `Возникла ошибка на сервере: ${error}`
 			})	
+		}
+	}
+
+	async deleteFile(request, response) {
+		try {
+			const file = await File.findOne({ _id: request.query.id, user: request.user.id });
+			if (!file) {
+				return response.status(404).json({
+					status: "error",
+					message: "Файл с таким именем не найден!"
+				});
+			}
+			fileService.deleteFile(file);
+			await file.remove();
+			return response.status(200).json({
+				status: "success",
+				message: "Файл был успешно удалён! "
+			});
+		} catch (error) {
+			console.log(`An error occurred on the server: ${error}`);
+			return response.status(500).json({
+				status: "error",
+				message: `Возникла ошибка на сервере: ${error}`
+			})
+		}
+	}
+
+	async downloadFile(request, response) {
+		try {
+			const file = await File.findOne({ _id: request.query.id, user: request.user.id });
+			const path = `${config.get("filePath")}/${request.user.id}/${file.path}/${file.name}`;
+			if (fs.existsSync(path)) {
+				return response.download(path, file.name);
+			} 
+			return response.status(404).json({
+				status: "error",
+				message: "Ошибка загрузки файла. Попробуйте позже!"
+			});
+		} catch (error) {
+			console.log(`An error occurred on the server: ${error}`);
+			return response.status(500).json({
+				status: "error",
+				message: `Возникла ошибка на сервере: ${error}`
+			})
 		}
 	}
 }
