@@ -140,6 +140,25 @@ class FileController {
 		}
 	}
 
+	async downloadFile(request, response) {
+		try {
+			const file = await File.findOne({ _id: request.query.id, user: request.user.id });
+			const path = `${config.get("filePath")}/${request.user.id}/${file.path}/${file.name}`;
+			if (fs.existsSync(path)) {
+				return response.download(path, file.name);
+			} 
+			return response.status(404).json({
+				status: "error",
+				message: "Ошибка загрузки файла. Попробуйте позже!"
+			});
+		} catch (error) {
+			console.log(`An error occurred on the server: ${error}`);
+			return response.status(500).json({
+				status: "error",
+				message: `Возникла ошибка на сервере: ${error}`
+			})
+		}
+	}
 }
 
 module.exports = new FileController();
