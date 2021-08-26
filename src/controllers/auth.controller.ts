@@ -7,7 +7,7 @@ const File = require("../models/File");
 const fileService = require("../services/file.service");
 
 class AuthController {
-    async registration(request, response) {
+    static async registration(request, response) {
         try {
             const errors = validationResult(request);
             if (!errors.isEmpty()) {
@@ -44,7 +44,7 @@ class AuthController {
         }
     }
 
-    async authorization(request, response) {
+    static async authorization(request, response) {
         try {
             const { email, password } = request.body;
             const user = await User.findOne({ email });
@@ -83,4 +83,4 @@ class AuthController {
     }
 }
 
-module.exports = new AuthController();
+export default AuthController;
