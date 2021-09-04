@@ -1,13 +1,15 @@
-const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
-const config = require("config");
-const { validationResult } = require("express-validator");
-const User = require("../models/User");
-const File = require("../models/File");
-const fileService = require("../services/file.service");
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+import config from 'config';
+import { validationResult } from 'express-validator';
+import User from '../models/User';
+import File from '../models/File';
+import fileService from '../services/file.service';
+import { Request, Response } from 'express';
+import { ControllerResponse } from '../types';
 
 class AuthController {
-    public static async registration(request, response) {
+    public static async registration(request: Request, response: Response): Promise<ControllerResponse> {
         try {
             const errors = validationResult(request);
             if (!errors.isEmpty()) {
@@ -44,7 +46,7 @@ class AuthController {
         }
     }
 
-    public static async authorization(request, response) {
+    public static async authorization(request: Request, response: Response): Promise<ControllerResponse> {
         try {
             const { email, password } = request.body;
             const user = await User.findOne({ email });

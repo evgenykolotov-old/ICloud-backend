@@ -1,9 +1,10 @@
-const fs = require("fs");
-const File = require("../models/File");
-const config = require("config");
+import fs from 'fs';
+import config from 'config';
+import { ServerResponse } from '../types';
+import { File } from '../models/File';
 
 class FileService {
-	createDir(file) {
+	public createDir(file: File): Promise<ServerResponse> {
 		const filePath = `${config.get("filePath")}/${file.user}/${file.path}`;
 		return new Promise((resolve, reject) => {
 			try {
@@ -29,8 +30,8 @@ class FileService {
 		});
 	}
 
-	deleteFile(file) {
-		const path = this.getFile(file);
+	public deleteFile(file: File): void {
+		const path = this.getPath(file);
 		if (file.type === 'dir') {
 			fs.rmdirSync(path);
 		} else {
@@ -38,9 +39,9 @@ class FileService {
 		}
 	}
 
-	getPath(file) {
+	private getPath(file: File): string {
 		return `${config.get("filePath")}/${file.user.id}/${file.path}`;
 	}
 }
 
-module.exports = new FileService();
+export default new FileService();

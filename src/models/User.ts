@@ -1,4 +1,14 @@
-const { Schema, model } = require("mongoose");
+import { Schema, model, Document } from 'mongoose';
+
+export interface User extends Document {
+    id: string;
+    email: string;
+    password: string;
+    diskSpace: number;
+    usedSpace: number;
+    avatar: string;
+    files: string[];
+}
 
 const userSchema = new Schema({
     email: { type: String, required: true, unique: true },
@@ -9,4 +19,4 @@ const userSchema = new Schema({
     files: [{ type: Schema.Types.ObjectId, ref: 'File' }]
 });
 
-module.exports = model("User", userSchema);
+export default model<User>("User", userSchema);
