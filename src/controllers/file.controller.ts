@@ -5,7 +5,7 @@ const config = require("config");
 const fs = require("fs");
 
 class FileController {
-	async createDir(request, response) {
+	public static async createDir(request, response) {
 		try {
 			const { name, type, parent } = request.body;
 			const file = new File({ name, type, parent, user: request.user.id });
@@ -34,7 +34,7 @@ class FileController {
 		}
 	}
 
-	async getFiles(request, response) {
+	public static async getFiles(request, response) {
 		try {
 			const { sort } = request.query;
 			let files;
@@ -62,7 +62,7 @@ class FileController {
 		}
 	}
 
-	async uploadFile(request, response) {
+	public static async uploadFile(request, response) {
 		try {
 			const file = request.files.file;
 			const parent = await File.findOne({ user: request.user.id, _id: request.body.parent });
@@ -116,7 +116,7 @@ class FileController {
 		}
 	}
 
-	async deleteFile(request, response) {
+	public static async deleteFile(request, response) {
 		try {
 			const file = await File.findOne({ _id: request.query.id, user: request.user.id });
 			if (!file) {
@@ -140,7 +140,7 @@ class FileController {
 		}
 	}
 
-	async downloadFile(request, response) {
+	public static async downloadFile(request, response) {
 		try {
 			const file = await File.findOne({ _id: request.query.id, user: request.user.id });
 			const path = `${config.get("filePath")}/${request.user.id}/${file.path}/${file.name}`;
@@ -161,4 +161,4 @@ class FileController {
 	}
 }
 
-module.exports = new FileController();
+module.exports = FileController;

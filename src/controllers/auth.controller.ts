@@ -7,7 +7,7 @@ const File = require("../models/File");
 const fileService = require("../services/file.service");
 
 class AuthController {
-    static async registration(request, response) {
+    public static async registration(request, response) {
         try {
             const errors = validationResult(request);
             if (!errors.isEmpty()) {
@@ -44,7 +44,7 @@ class AuthController {
         }
     }
 
-    static async authorization(request, response) {
+    public static async authorization(request, response) {
         try {
             const { email, password } = request.body;
             const user = await User.findOne({ email });
