@@ -1,10 +1,10 @@
 {
   "name": "icloud-backend",
-  "version": "0.5.0",
+  "version": "0.6.1",
   "description": "",
-  "main": "src/index.ts",
+  "main": "public/index.js",
   "scripts": {
-    "start": "npm run build:ts && node src/index.js",
+    "start": "node public/index.js",
     "start:dev": "ts-node src/index.ts",
     "build:ts": "tsc --project './tsconfig.json'"
   },
