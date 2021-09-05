@@ -5,6 +5,7 @@ import { ControllerResponse } from '../types/index';
 import User, { User as UserType } from '../models/User';
 import File, { File as FileType } from '../models/File';
 import fileService from '../services/file.service';
+import { UploadedFile } from 'express-fileupload';
 
 class FileController {
 	public static async createDir(request: Request, response: Response): Promise<ControllerResponse> {
@@ -67,21 +68,21 @@ class FileController {
 
 	public static async uploadFile(request: Request, response: Response): Promise<ControllerResponse> {
 		try {
-			const file = request.files?.file as Partial<FileType>;
+			const file = request.files?.file as  UploadedFile;
 			const parent = await File.findOne({ user: request.user?.id, _id: request.body.parent });
 			const user: UserType = await User.findOne({ _id: request.user?.id }) as UserType;
-			if (user?.usedSpace + file?.size! > user?.diskSpace) {
+			if (user?.usedSpace + file.size > user?.diskSpace) {
 				return response.status(400).json({
 					status: "error",
 					message: "Не хватает свободного места на диске!"
 				});
 			}
-			user.usedSpace = user.usedSpace + file?.size!;
+			user.usedSpace = user.usedSpace + file.size;
 			let path;
 			if (parent) {
-				path = `${config.get("filePath")}/${user.id}/${parent.path}/${file?.name}`;
+				path = `${config.get("filePath")}/${user.id}/${parent.path}/${file.name}`;
 			} else {
-				path = `${config.get("filePath")}/${user.id}/${file?.name}`;
+				path = `${config.get("filePath")}/${user.id}/${file.name}`;
 			}
 			if (fs.existsSync(path)) {
 				return response.status(400).json({
@@ -89,11 +90,11 @@ class FileController {
 					message: "Файл с таким именем уже существует"
 				});
 			}
-			fs.renameSync(file.name!, path);
-			const type = file?.name!.split(".").pop();
-			let filePath = file?.path;
+			file.mv(path);
+			const type = file.name.split(".").pop();
+			let filePath = file.name;
 			if (parent) {
-				filePath = `${file?.parent}/${file.name}`;
+				filePath = `${parent.path}/${file.name}`;
 			}
 			const dbFile = new File({
 				name: file.name,

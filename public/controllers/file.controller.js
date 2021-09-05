@@ -158,19 +158,19 @@ var FileController = /** @class */ (function () {
                         return [4 /*yield*/, User_1.default.findOne({ _id: (_c = request.user) === null || _c === void 0 ? void 0 : _c.id })];
                     case 2:
                         user = _d.sent();
-                        if ((user === null || user === void 0 ? void 0 : user.usedSpace) + (file === null || file === void 0 ? void 0 : file.size) > (user === null || user === void 0 ? void 0 : user.diskSpace)) {
+                        if ((user === null || user === void 0 ? void 0 : user.usedSpace) + file.size > (user === null || user === void 0 ? void 0 : user.diskSpace)) {
                             return [2 /*return*/, response.status(400).json({
                                     status: "error",
                                     message: "Не хватает свободного места на диске!"
                                 })];
                         }
-                        user.usedSpace = user.usedSpace + (file === null || file === void 0 ? void 0 : file.size);
+                        user.usedSpace = user.usedSpace + file.size;
                         path = void 0;
                         if (parent_3) {
-                            path = config_1.default.get("filePath") + "/" + user.id + "/" + parent_3.path + "/" + (file === null || file === void 0 ? void 0 : file.name);
+                            path = config_1.default.get("filePath") + "/" + user.id + "/" + parent_3.path + "/" + file.name;
                         }
                         else {
-                            path = config_1.default.get("filePath") + "/" + user.id + "/" + (file === null || file === void 0 ? void 0 : file.name);
+                            path = config_1.default.get("filePath") + "/" + user.id + "/" + file.name;
                         }
                         if (fs_1.default.existsSync(path)) {
                             return [2 /*return*/, response.status(400).json({
@@ -178,11 +178,11 @@ var FileController = /** @class */ (function () {
                                     message: "Файл с таким именем уже существует"
                                 })];
                         }
-                        fs_1.default.renameSync(file.name, path);
-                        type = file === null || file === void 0 ? void 0 : file.name.split(".").pop();
-                        filePath = file === null || file === void 0 ? void 0 : file.path;
+                        file.mv(path);
+                        type = file.name.split(".").pop();
+                        filePath = file.name;
                         if (parent_3) {
-                            filePath = (file === null || file === void 0 ? void 0 : file.parent) + "/" + file.name;
+                            filePath = parent_3.path + "/" + file.name;
                         }
                         dbFile = new File_1.default({
                             name: file.name,
