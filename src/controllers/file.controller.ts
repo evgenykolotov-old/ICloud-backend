@@ -1,14 +1,16 @@
-const fileService = require("../services/file.service");
-const User = require("../models/User");
-const File = require("../models/File");
-const config = require("config");
-const fs = require("fs");
+import fs from 'fs';
+import config from 'config';
+import { Request, Response } from 'express';
+import { ControllerResponse } from '../types/index';
+import User, { User as UserType } from '../models/User';
+import File, { File as FileType } from '../models/File';
+import fileService from '../services/file.service';
 
 class FileController {
-	async createDir(request, response) {
+	public static async createDir(request: Request, response: Response): Promise<ControllerResponse> {
 		try {
 			const { name, type, parent } = request.body;
-			const file = new File({ name, type, parent, user: request.user.id });
+			const file = new File({ name, type, parent, user: request.user?.id });
 			const parentFile = await File.findOne({ _id: parent });
 			if (!parentFile) {
 				file.path = name;
@@ -34,22 +36,23 @@ class FileController {
 		}
 	}
 
-	async getFiles(request, response) {
+	public static async getFiles(request: Request, response: Response): Promise<ControllerResponse> {
 		try {
+			const parent: string = request.query.parent as string;
 			const { sort } = request.query;
-			let files;
+			let files: FileType[];
 			switch (sort) {
 				case 'name':
-					files = await File.find({ user: request.user.id, parent: request.query.parent }).sort({ name: 1 });
+					files = await File.find({ user: request.user?.id, parent }).sort({ name: 1 });
 					break;
 				case 'type':
-					files = await File.find({ user: request.user.id, parent: request.query.parent }).sort({ type: 1 });
+					files = await File.find({ user: request.user?.id, parent }).sort({ type: 1 });
 					break;
 				case 'date':
-					files = await File.find({ user: request.user.id, parent: request.query.parent }).sort({ date: 1 });
+					files = await File.find({ user: request.user?.id, parent }).sort({ date: 1 });
 					break;
 				default: 
-					files = await File.find({ user: request.user.id, parent: request.query.parent });
+					files = await File.find({ user: request.user?.id, parent });
 					break;
 			}
 			return response.status(200).json({ status: "success", files });
@@ -62,23 +65,23 @@ class FileController {
 		}
 	}
 
-	async uploadFile(request, response) {
+	public static async uploadFile(request: Request, response: Response): Promise<ControllerResponse> {
 		try {
-			const file = request.files.file;
-			const parent = await File.findOne({ user: request.user.id, _id: request.body.parent });
-			const user = await User.findOne({ _id: request.user.id });
-			if (user.usedSpace + file.size > user.diskSpace) {
-				return resposne.status(400).json({
+			const file = request.files?.file as Partial<FileType>;
+			const parent = await File.findOne({ user: request.user?.id, _id: request.body.parent });
+			const user: UserType = await User.findOne({ _id: request.user?.id }) as UserType;
+			if (user?.usedSpace + file?.size! > user?.diskSpace) {
+				return response.status(400).json({
 					status: "error",
 					message: "Не хватает свободного места на диске!"
 				});
 			}
-			user.usedSpace = user.usedSpace + file.size;
+			user.usedSpace = user.usedSpace + file?.size!;
 			let path;
 			if (parent) {
-				path = `${config.get("filePath")}/${user.id}/${parent.path}/${file.name}`;
+				path = `${config.get("filePath")}/${user.id}/${parent.path}/${file?.name}`;
 			} else {
-				path = `${config.get("filePath")}/${user.id}/${file.name}`;
+				path = `${config.get("filePath")}/${user.id}/${file?.name}`;
 			}
 			if (fs.existsSync(path)) {
 				return response.status(400).json({
@@ -86,11 +89,11 @@ class FileController {
 					message: "Файл с таким именем уже существует"
 				});
 			}
-			file.mv(path);
-			const type = file.name.split(".").pop();
-			let filePath = file.path;
+			fs.renameSync(file.name!, path);
+			const type = file?.name!.split(".").pop();
+			let filePath = file?.path;
 			if (parent) {
-				filePath = `${file.parent}/${file.name}`;
+				filePath = `${file?.parent}/${file.name}`;
 			}
 			const dbFile = new File({
 				name: file.name,
@@ -116,9 +119,10 @@ class FileController {
 		}
 	}
 
-	async deleteFile(request, response) {
+	public static async deleteFile(request: Request, response: Response): Promise<ControllerResponse> {
 		try {
-			const file = await File.findOne({ _id: request.query.id, user: request.user.id });
+			const fileId: string = request.query.id as string;
+			const file = await File.findOne({ _id: fileId, user: request.user?.id });
 			if (!file) {
 				return response.status(404).json({
 					status: "error",
@@ -140,12 +144,13 @@ class FileController {
 		}
 	}
 
-	async downloadFile(request, response) {
+	public static async downloadFile(request: Request, response: Response): Promise<ControllerResponse | void> {
 		try {
-			const file = await File.findOne({ _id: request.query.id, user: request.user.id });
-			const path = `${config.get("filePath")}/${request.user.id}/${file.path}/${file.name}`;
+			const fileId: string = request.query.id as string;
+			const file = await File.findOne({ _id: fileId, user: request.user?.id });
+			const path = `${config.get("filePath")}/${request.user?.id}/${file?.path}/${file?.name}`;
 			if (fs.existsSync(path)) {
-				return response.download(path, file.name);
+				return response.download(path);
 			} 
 			return response.status(404).json({
 				status: "error",
@@ -161,4 +166,4 @@ class FileController {
 	}
 }
 
-module.exports = new FileController();
+export default FileController;

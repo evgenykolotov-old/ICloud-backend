@@ -1,14 +1,13 @@
-const express = require("express");
-const mongoose = require("mongoose");
-const config = require("config");
-const fileUpload = require("express-fileupload");
+import express from "express";
+import mongoose from "mongoose";
+import config from "config";
+import fileUpload from "express-fileupload";
+import authRouter from "./routes/auth.routes";
+import fileRouter from "./routes/file.routes";
 
 const application = express();
 const PORT = config.get("serverPort");
-const MONGO_URL = config.get("MongoURL");
-
-const authRouter = require("./routes/auth.routes");
-const fileRouter = require("./routes/file.routes");
+const MONGO_URL = config.get("MongoURL") as string;
 
 application.use(fileUpload({}));
 application.use(express.json());
@@ -27,7 +26,7 @@ const startServer = async () => {
             console.log(`Server is running on port ${PORT}`);
         });
     } catch (error) {
-
+        console.log(`An error occurred when starting the server: ${error}`);
     }
 }
 
