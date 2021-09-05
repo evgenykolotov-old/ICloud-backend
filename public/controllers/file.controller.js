@@ -254,27 +254,27 @@ var FileController = /** @class */ (function () {
         });
     };
     FileController.downloadFile = function (request, response) {
-        var _a, _b;
+        var _a;
         return __awaiter(this, void 0, void 0, function () {
             var fileId, file, path, error_5;
-            return __generator(this, function (_c) {
-                switch (_c.label) {
+            return __generator(this, function (_b) {
+                switch (_b.label) {
                     case 0:
-                        _c.trys.push([0, 2, , 3]);
+                        _b.trys.push([0, 2, , 3]);
                         fileId = request.query.id;
                         return [4 /*yield*/, File_1.default.findOne({ _id: fileId, user: (_a = request.user) === null || _a === void 0 ? void 0 : _a.id })];
                     case 1:
-                        file = _c.sent();
-                        path = config_1.default.get("filePath") + "/" + ((_b = request.user) === null || _b === void 0 ? void 0 : _b.id) + "/" + (file === null || file === void 0 ? void 0 : file.path) + "/" + (file === null || file === void 0 ? void 0 : file.name);
+                        file = _b.sent();
+                        path = file_service_1.default.getPath(file);
                         if (fs_1.default.existsSync(path)) {
-                            return [2 /*return*/, response.download(path)];
+                            return [2 /*return*/, response.download(path, file === null || file === void 0 ? void 0 : file.name)];
                         }
                         return [2 /*return*/, response.status(404).json({
                                 status: "error",
                                 message: "Ошибка загрузки файла. Попробуйте позже!"
                             })];
                     case 2:
-                        error_5 = _c.sent();
+                        error_5 = _b.sent();
                         console.log("An error occurred on the server: " + error_5);
                         return [2 /*return*/, response.status(500).json({
                                 status: "error",

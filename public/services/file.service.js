@@ -44,7 +44,7 @@ var FileService = /** @class */ (function () {
         }
     };
     FileService.prototype.getPath = function (file) {
-        return config_1.default.get("filePath") + "/" + file.user.id + "/" + file.path;
+        return config_1.default.get("filePath") + "/" + file.user + "/" + file.path;
     };
     return FileService;
 }());

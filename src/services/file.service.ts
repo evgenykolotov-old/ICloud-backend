@@ -40,8 +40,8 @@ class FileService {
 		}
 	}
 
-	private getPath(file: File): string {
-		return `${config.get("filePath")}/${(file.user as User).id as string}/${file.path}`;
+	public getPath(file: File): string {
+		return `${config.get("filePath")}/${file.user}/${file.path}`;
 	}
 }
 

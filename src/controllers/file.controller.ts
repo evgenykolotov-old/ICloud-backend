@@ -149,9 +149,9 @@ class FileController {
 		try {
 			const fileId: string = request.query.id as string;
 			const file = await File.findOne({ _id: fileId, user: request.user?.id });
-			const path = `${config.get("filePath")}/${request.user?.id}/${file?.path}/${file?.name}`;
+			const path = fileService.getPath(file as FileType);
 			if (fs.existsSync(path)) {
-				return response.download(path);
+				return response.download(path, file?.name as string);
 			} 
 			return response.status(404).json({
 				status: "error",
