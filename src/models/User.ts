@@ -1,4 +1,5 @@
 import { Schema, model, Document } from 'mongoose';
+import { File } from './File';
 
 export interface User extends Document {
     id: string;
@@ -7,7 +8,7 @@ export interface User extends Document {
     diskSpace: number;
     usedSpace: number;
     avatar: string;
-    files: string[];
+    files: File[] | string[];
 }
 
 const userSchema = new Schema({

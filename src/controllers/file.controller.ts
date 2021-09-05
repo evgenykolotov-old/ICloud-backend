@@ -1,7 +1,7 @@
 import fs from 'fs';
 import config from 'config';
 import { Request, Response } from 'express';
-import { ControllerResponse } from '../types';
+import { ControllerResponse } from '../types/index';
 import User, { User as UserType } from '../models/User';
 import File, { File as FileType } from '../models/File';
 import fileService from '../services/file.service';

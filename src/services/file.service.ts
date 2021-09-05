@@ -1,7 +1,8 @@
 import fs from 'fs';
 import config from 'config';
-import { ServerResponse } from '../types';
+import { ServerResponse } from '../types/index';
 import { File } from '../models/File';
+import { User } from '../models/User';
 
 class FileService {
 	public createDir(file: File): Promise<ServerResponse> {
@@ -40,7 +41,7 @@ class FileService {
 	}
 
 	private getPath(file: File): string {
-		return `${config.get("filePath")}/${file.user.id}/${file.path}`;
+		return `${config.get("filePath")}/${(file.user as User).id as string}/${file.path}`;
 	}
 }
 

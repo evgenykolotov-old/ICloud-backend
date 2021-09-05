@@ -6,7 +6,7 @@ import User from '../models/User';
 import File from '../models/File';
 import fileService from '../services/file.service';
 import { Request, Response } from 'express';
-import { ControllerResponse } from '../types';
+import { ControllerResponse } from '../types/index';
 
 class AuthController {
     public static async registration(request: Request, response: Response): Promise<ControllerResponse> {
@@ -67,7 +67,7 @@ class AuthController {
             return response.status(200).json({
                 status: "success",
                 token,
-                user: {
+                payload: {
                     id: user.id,
                     email: user.email,
                     diskSpace: user.diskSpace,

@@ -1,4 +1,5 @@
 import { model, Schema, Document } from 'mongoose';
+import { User } from './User';
 
 export interface File extends Document {
     _id: string;
@@ -7,8 +8,8 @@ export interface File extends Document {
 	accessLink: string;
 	size: number;
 	path: string;
-	user: string;
-	parent?: string;
+	user: User | string;
+	parent?: File | string;
 	children: string[];
 }
 

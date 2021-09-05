@@ -1,9 +1,9 @@
 import { User } from './types';
 
 declare global {
-    namespace Express {
+    export namespace Express {
         export interface Request {
-            user?: User;
+            user?: Partial<User>;
         }
     }
 }

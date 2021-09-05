@@ -1,9 +1,10 @@
 import jwt from 'jsonwebtoken';
 import config from 'config';
-import { RequestHandler } from 'express';
-import { MiddlewareResponse } from '../types';
+import { Request, Response, NextFunction as Next } from 'express';
+import { MiddlewareResponse } from '../types/index';
+import { User } from '../models/User';
 
-const authMiddleware: RequestHandler =  async (request, response, next): Promise<MiddlewareResponse> => {
+const authMiddleware =  async (request: Request, response: Response, next: Next): Promise<MiddlewareResponse> => {
 	if (request.method === "OPTIONS") {
 		return next();
 	}
@@ -16,7 +17,7 @@ const authMiddleware: RequestHandler =  async (request, response, next): Promise
 			});
 		}
 		const decoded = jwt.verify(token, config.get("secretKey"));
-		request.user = decoded as any;
+		request.user = decoded as Partial<User>;
 		return next();
 	} catch (error) {
 		return response.status(401).json({
