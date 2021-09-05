@@ -2,5 +2,5 @@
     "serverPort": 5000,
     "MongoURL": "mongodb://localhost:27017/icloud",
     "secretKey": "icloud-secret-token",
-    "filePath": "/root/packages/ICloud-backend/src/files"
+    "filePath": "/root/packages/ICloud-backend/files"
 }
