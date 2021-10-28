@@ -46,7 +46,7 @@ class AuthController {
         }
     }
 
-    public static async authorization(request: Request, response: Response): Promise<ControllerResponse> {
+    public static async login(request: Request, response: Response): Promise<ControllerResponse> {
         try {
             const { email, password } = request.body;
             const user = await User.findOne({ email });
@@ -62,6 +62,33 @@ class AuthController {
                     status: "error",
                     message: "Не правильный emeil или пароль!"
                 });
+            }
+            const token = jwt.sign({ id: user.id }, config.get("secretKey"), { expiresIn: "1h" });
+            return response.status(200).json({
+                status: "success",
+                token,
+                payload: {
+                    id: user.id,
+                    email: user.email,
+                    diskSpace: user.diskSpace,
+                    usedSpace: user.usedSpace,
+                    avatar: user.avatar
+                }
+            });
+        } catch (error) {
+            console.log(`An error occurred on the server: ${error}`);
+            return response.status(500).json({ 
+                status: "error", 
+                message: `Возникла ошибка на сервере: ${error}` 
+            });	
+        }
+    }
+
+    public static async authorization(request: Request, response: Response): Promise<ControllerResponse> {
+        try {
+            const user = await User.findOne({ _id: request.user?.id });
+            if (!user) {
+                throw new Error('Ошибка базы данных, пользователь не найден!');
             }
             const token = jwt.sign({ id: user.id }, config.get("secretKey"), { expiresIn: "1h" });
             return response.status(200).json({
