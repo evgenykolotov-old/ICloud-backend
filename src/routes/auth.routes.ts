@@ -1,6 +1,8 @@
 import { Router } from 'express';
 import { body } from 'express-validator';
 import AuthController from '../controllers/auth.controller';
+import authMiddleware from '../middlewares/auth.middleware';
+
 const router = Router();
 
 const validateFields = [
@@ -9,6 +11,7 @@ const validateFields = [
 ];
 
 router.post("/registration", validateFields, AuthController.registration);
-router.post("/login", AuthController.authorization);
+router.post("/login", AuthController.login);
+router.post('/auth', authMiddleware, AuthController.authorization);
 
 export default router;
