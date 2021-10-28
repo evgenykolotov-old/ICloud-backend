@@ -102,7 +102,7 @@ var AuthController = /** @class */ (function () {
             });
         });
     };
-    AuthController.authorization = function (request, response) {
+    AuthController.login = function (request, response) {
         return __awaiter(this, void 0, void 0, function () {
             var _a, email, password, user, compare, token, error_2;
             return __generator(this, function (_b) {
@@ -144,6 +144,44 @@ var AuthController = /** @class */ (function () {
                         return [2 /*return*/, response.status(500).json({
                                 status: "error",
                                 message: "\u0412\u043E\u0437\u043D\u0438\u043A\u043B\u0430 \u043E\u0448\u0438\u0431\u043A\u0430 \u043D\u0430 \u0441\u0435\u0440\u0432\u0435\u0440\u0435: " + error_2
+                            })];
+                    case 3: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    AuthController.authorization = function (request, response) {
+        var _a;
+        return __awaiter(this, void 0, void 0, function () {
+            var user, token, error_3;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0:
+                        _b.trys.push([0, 2, , 3]);
+                        return [4 /*yield*/, User_1.default.findOne({ _id: (_a = request.user) === null || _a === void 0 ? void 0 : _a.id })];
+                    case 1:
+                        user = _b.sent();
+                        if (!user) {
+                            throw new Error('Ошибка базы данных, пользователь не найден!');
+                        }
+                        token = jsonwebtoken_1.default.sign({ id: user.id }, config_1.default.get("secretKey"), { expiresIn: "1h" });
+                        return [2 /*return*/, response.status(200).json({
+                                status: "success",
+                                token: token,
+                                payload: {
+                                    id: user.id,
+                                    email: user.email,
+                                    diskSpace: user.diskSpace,
+                                    usedSpace: user.usedSpace,
+                                    avatar: user.avatar
+                                }
+                            })];
+                    case 2:
+                        error_3 = _b.sent();
+                        console.log("An error occurred on the server: " + error_3);
+                        return [2 /*return*/, response.status(500).json({
+                                status: "error",
+                                message: "\u0412\u043E\u0437\u043D\u0438\u043A\u043B\u0430 \u043E\u0448\u0438\u0431\u043A\u0430 \u043D\u0430 \u0441\u0435\u0440\u0432\u0435\u0440\u0435: " + error_3
                             })];
                     case 3: return [2 /*return*/];
                 }
